@@ -1290,6 +1290,17 @@ int kaptoimg(int typein,char *filein,int typeheader,char *fileheader,int typeout
     uint8_t *line = NULL;
     uint32_t *index;
 
+    memset(palette,0,sizeof(palette));
+
+    if (optionpal && !strcasecmp(optionpal,"ALL") && (typeout != (int)FIF_TIFF) && (typeout != (int)FIF_GIF))
+    {
+        typeout = FIF_TIFF;
+
+        fprintf(stderr,"ERROR - Palette ALL accepted with only TIF or GIF %s\n",fileout);
+        return 2;
+    }
+
+
     in = fopen(filein, "rb");
     if (in == NULL)
     {
@@ -1338,16 +1349,6 @@ int kaptoimg(int typein,char *filein,int typeheader,char *fileheader,int typeout
     }
 
     /* Create bitmap */
-    memset(palette,0,sizeof(palette));
-
-    if (optionpal && !strcasecmp(optionpal,"ALL") && (typeout != (int)FIF_TIFF) && (typeout != (int)FIF_GIF))
-    {
-        typeout = FIF_TIFF;
-
-        fprintf(stderr,"ERROR - Palette ALL accepted with only TIF or GIF %s\n",fileout);
-        return 2;
-    }
-
 
     bitmap = FreeImage_AllocateEx(width, height, bits_out,palette,FI_COLOR_IS_RGB_COLOR,palette,0,0,0);
     bitmappal = FreeImage_GetPalette(bitmap);
